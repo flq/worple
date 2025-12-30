@@ -62,22 +62,23 @@ get_feedback(Guess, Target) = Pattern =>
         end
     end.
 
-% --- LOGIC: Entropy Calculation ---
 suggest_best(Candidates, FullDict) =>
-    % If there are too many words, use a precomputed opener
-    if length(Candidates) > 500 then
-        printf("Suggestion: Try 'SALET' or 'CRANE' (High initial entropy)\n")
+    Count = length(Candidates),
+    % We only use the "hardcoded" opener for the very first guess
+    % or if the list is still massive (over 1500 words).
+    if Count > 1500 then
+        printf("Suggestion: Try 'SALET', 'CRANE', or 'ROATE' (Best openers)\n")
     else
-        printf("Calculating best entropy...\n"),  % Changed comma to newline
+        printf("Calculating entropy for %d candidates...\n", Count),
         
-        % We check potential guesses from the candidates list
+        % We score the REMAINING candidates to find which one
+        % splits the current pool most effectively.
         Scored = [(calculate_entropy(W, Candidates), W) : W in Candidates],
         Sorted = sort_down(Scored),
         
         printf("Top suggestions:\n"),
-        % Pattern matching (Score, Word) directly from the list
         foreach(I in 1..min(5, length(Sorted)))
-            (Score, Word) = Sorted[I], % Extracting values clearly
+            (Score, Word) = Sorted[I],
             printf("%w (%.2f bits)\n", Word, Score)
         end
     end.
