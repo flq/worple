@@ -64,22 +64,22 @@ get_feedback(Guess, Target) = Pattern =>
 
 suggest_best(Candidates, FullDict) =>
     Count = length(Candidates),
-    % We only use the "hardcoded" opener for the very first guess
-    % or if the list is still massive (over 1500 words).
     if Count > 1500 then
-        printf("Suggestion: Try 'SALET', 'CRANE', or 'ROATE' (Best openers)\n")
+        printf("Suggestion: Try 'SALET' (Best opener)\n")
     else
-        printf("Calculating entropy for %d candidates...\n", Count),
+        printf("Calculating optimal entropy... (Comparing %d dict words against %d candidates)\n", length(FullDict), Count),
         
-        % We score the REMAINING candidates to find which one
-        % splits the current pool most effectively.
-        Scored = [(calculate_entropy(W, Candidates), W) : W in Candidates],
+        % We check EVERY word in the dictionary as a potential guess
+        % but we measure how it splits the remaining CANDIDATES.
+        Scored = [(calculate_entropy(W, Candidates), W) : W in FullDict],
         Sorted = sort_down(Scored),
         
         printf("Top suggestions:\n"),
         foreach(I in 1..min(5, length(Sorted)))
             (Score, Word) = Sorted[I],
-            printf("%w (%.2f bits)\n", Word, Score)
+            % Mark if the suggested word is actually a possible answer
+            Marker = cond(membchk(Word, Candidates), "*", " "),
+            printf("%w%s (%.2f bits)\n", Word, Marker, Score)
         end
     end.
 
