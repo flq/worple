@@ -65,7 +65,7 @@ get_feedback(Guess, Target) = Pattern =>
 suggest_best(Candidates, FullDict) =>
     Count = length(Candidates),
     if Count > 1500 then
-        printf("Suggestion: Try 'SALET' (Best opener)\n")
+        printf("Suggestion: Try 'Tares' (Best opener for this dictionary)\n")
     else
         printf("Calculating optimal entropy... (Comparing %d dict words against %d candidates)\n", length(FullDict), Count),
         
