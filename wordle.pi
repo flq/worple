@@ -1,47 +1,92 @@
 import util.
 import math.
 
-main =>
+% 1. This one runs if you type: picat wordle.pi
+main => 
+    run_game(false).
+
+% 2. This one runs if you type: picat wordle.pi --use-played
+main(Args) =>
+    UsePlayed = cond(membchk("use-played", Args), true, false),
+    run_game(UsePlayed).
+
+% 3. The actual logic moved to a separate predicate
+run_game(UsePlayed) =>
     % 1. Load the dictionary
-    Words = [W : W in read_file_lines("words.txt"), length(W) == 5],
-    printf("Loaded %d words.\n", length(Words)),
+    AllWords = [W : W in read_file_lines("words.txt"), length(W) == 5],
     
-    % The solver starts with the full list of candidates
-    solve_loop(Words, Words).
+    if UsePlayed then
+        % Simplified approach to avoid the Map/Set memory overhead
+        PlayedWords = read_file_lines("played.txt"),
+        FinalCandidates = [W : W in AllWords, not membchk(W, PlayedWords)],
+        printf("Excluded played words. Candidates left: %d\n", length(FinalCandidates))
+    else
+        FinalCandidates = AllWords,
+        printf("Running in standard mode. Candidates: %d\n", length(AllWords))
+    end,
+    
+    % The solver starts
+    solve_loop(FinalCandidates, AllWords, "tares").
 
 % The interaction loop
-solve_loop(Candidates, FullDictionary) =>
+solve_loop(Candidates, FullDictionary, CurrentGuess) =>
     Count = length(Candidates),
-    printf("\nRemaining candidates: %d\n", Count),
+    printf("\n--- New Turn ---\n"),
+    printf("Remaining candidates: %d\n", Count),
     
-    if Count == 1 then
+    if (Count == 1) then
         printf("The word is: %w\n", Candidates[1]),
         halt
-    elseif Count <= 10 then
+    elseif (Count <= 10) then
         printf("Possible words: %w\n", Candidates)
     end,
 
-    % Suggest the best word based on entropy
-    suggest_best(Candidates, FullDictionary),
-
-    printf("\nEnter your guess (5 letters): "), Guess = read_line().strip(),
-    printf("Enter feedback (G=Green, Y=Yellow, .=Gray): "), Feedback = read_line().strip(),
+    % Convert current guess to uppercase for display
+    UGuess = [to_uppercase(C) : C in CurrentGuess],
+    printf("My guess is: %s\n", UGuess),
+    
+    printf("Enter feedback (G=Green, Y=Yellow, .=Gray): "),
+    Feedback = read_line().strip(),
     
     % Translate feedback (G, Y, .) to numeric pattern (2, 1, 0)
     Pattern = [cond(C == 'G', 2, cond(C == 'Y', 1, 0)) : C in Feedback],
     
-    % Prune the list
-    NewCandidates = [W : W in Candidates, get_feedback(Guess, W) == Pattern],
-    solve_loop(NewCandidates, FullDictionary).
+    % Prune the list based on the guess just made
+    NewCandidates = [W : W in Candidates, get_feedback(CurrentGuess, W) == Pattern],
+    
+    if (NewCandidates == []) then
+        printf("Error: No words match that feedback!\n"),
+        halt
+    end,
 
-% --- LOGIC: Feedback Simulator (Handles Double Letters) ---
+    % Find the NEXT guess using entropy
+    NextGuess = pick_best_guess(NewCandidates, FullDictionary),
+    solve_loop(NewCandidates, FullDictionary, NextGuess).
+
+% --- LOGIC: Select the best word to play next ---
+pick_best_guess(Candidates, FullDict) = BestWord =>
+    if (length(Candidates) == 1) then
+        BestWord = Candidates[1]
+    else
+        printf("Calculating best entropy for next move... "),
+        % Calculate entropy for all words in FullDict against current Candidates
+        Scored = [(calculate_entropy(W, Candidates), W) : W in FullDict],
+        Sorted = sort_down(Scored),
+        
+        % Extract the best word from the first tuple in the sorted list
+        BestPair = Sorted[1],
+        (MaxScore, Selection) = BestPair,
+        BestWord = Selection,
+        
+        printf("Done (Best: %s at %.2f bits)\n", BestWord, MaxScore)
+    end.
+
+% --- LOGIC: Feedback Simulator ---
 get_feedback(Guess, Target) = Pattern =>
     Pattern = new_list(5),
     Counts = new_map(),
-    % Count occurrences in Target
     foreach(C in Target) Counts.put(C, Counts.get(C, 0) + 1) end,
 
-    % First Pass: Find Greens
     foreach(I in 1..5)
         if Guess[I] == Target[I] then
             Pattern[I] = 2,
@@ -49,7 +94,6 @@ get_feedback(Guess, Target) = Pattern =>
         end
     end,
 
-    % Second Pass: Find Yellows and Grays
     foreach(I in 1..5)
         if var(Pattern[I]) then
             Char = Guess[I],
@@ -62,27 +106,7 @@ get_feedback(Guess, Target) = Pattern =>
         end
     end.
 
-suggest_best(Candidates, FullDict) =>
-    Count = length(Candidates),
-    if Count > 1500 then
-        printf("Suggestion: Try 'Tares' (Best opener for this dictionary)\n")
-    else
-        printf("Calculating optimal entropy... (Comparing %d dict words against %d candidates)\n", length(FullDict), Count),
-        
-        % We check EVERY word in the dictionary as a potential guess
-        % but we measure how it splits the remaining CANDIDATES.
-        Scored = [(calculate_entropy(W, Candidates), W) : W in FullDict],
-        Sorted = sort_down(Scored),
-        
-        printf("Top suggestions:\n"),
-        foreach(I in 1..min(5, length(Sorted)))
-            (Score, Word) = Sorted[I],
-            % Mark if the suggested word is actually a possible answer
-            Marker = cond(membchk(Word, Candidates), "*", " "),
-            printf("%w%s (%.2f bits)\n", Word, Marker, Score)
-        end
-    end.
-
+% --- LOGIC: Entropy Calculation ---
 calculate_entropy(Guess, Candidates) = Entropy =>
     Total = length(Candidates),
     Buckets = new_map(),
@@ -90,9 +114,10 @@ calculate_entropy(Guess, Candidates) = Entropy =>
         P = get_feedback(Guess, C),
         Buckets.put(P, Buckets.get(P, 0) + 1)
     end,
-    Entropy = 0.0,
+    Ent = 0.0,
     foreach(Pattern in keys(Buckets))
         Count = Buckets.get(Pattern),
         Prob = Count / Total,
-        Entropy := Entropy - (Prob * log2(Prob))
-    end.
+        Ent := Ent - (Prob * log2(Prob))
+    end,
+    Entropy = Ent.

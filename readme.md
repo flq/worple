@@ -7,7 +7,7 @@ You should have [picat](https://picat-lang.org) available. Follow the instructio
 
 ## What does it do?
 
-The script runs in a loop. Based on guess and wordle's feedback, remaining words are evaluated against how much information they're able to extract from the pool of remaining words. The best scoring words are presented to the user. This script is tuned to play wordle **in normal mode**.
+The script runs in a loop. Starting with the best start against the provided dictionary (TARES), the script expects you to enter the guesses result. The next guess is evaluated against how much information they're able to extract from the pool of remaining words. The one scoring best in terms of entropy decrease will be shown to the user, repeating the loop. This script is tuned to play wordle **in normal mode**.
 
 ## Using it
 
@@ -15,6 +15,14 @@ You can run the script contained like
 
 ```bash
 picat worlde.pi
+```
+
+## Elephant memory mode
+
+Assuming wordle doesn't play out a previous word again, a list containing most of the played words so far is included. In order to use it, run
+
+```bash
+picat wordle.pi use-played
 ```
 
 ## Contained words
