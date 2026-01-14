@@ -94,6 +94,7 @@ audio
 audit
 avail
 avert
+avoid
 await
 awake
 award
@@ -153,6 +154,7 @@ blame
 bland
 blank
 blare
+blast
 blaze
 bleak
 bleed
@@ -676,6 +678,7 @@ guild
 guile
 guise
 gully
+gumbo
 gummy
 guppy
 gusty
@@ -874,6 +877,7 @@ mambo
 manga
 mango
 mania
+manic
 manly
 manor
 maple
@@ -1016,6 +1020,7 @@ pause
 peace
 peach
 pearl
+pecan
 pedal
 penne
 perch
@@ -1101,6 +1106,7 @@ purge
 quail
 quake
 qualm
+quark
 quart
 quash
 queen
@@ -1514,6 +1520,7 @@ trawl
 treat
 trend
 triad
+trial
 trice
 trick
 tripe
