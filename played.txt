@@ -263,6 +263,7 @@ chard
 charm
 chart
 chase
+chasm
 cheap
 cheat
 check
@@ -513,6 +514,7 @@ fewer
 fiber
 field
 fiend
+fiery
 fifth
 fifty
 filet
@@ -1122,6 +1124,7 @@ quite
 quota
 quote
 rabid
+racer
 radio
 rainy
 raise
@@ -1413,6 +1416,8 @@ suede
 sugar
 suite
 sulky
+sully
+sumac
 sunny
 super
 surer
@@ -1611,6 +1616,7 @@ waltz
 waste
 watch
 water
+waxen
 weary
 wedge
 weedy
