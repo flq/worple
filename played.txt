@@ -40,6 +40,7 @@ alert
 alien
 alike
 alive
+allot
 allow
 aloft
 alone
@@ -115,6 +116,7 @@ balsa
 banal
 banjo
 barge
+baron
 basic
 basin
 baste
@@ -297,6 +299,7 @@ clear
 cleft
 clerk
 click
+cliff
 climb
 cling
 cloak
@@ -356,10 +359,12 @@ crook
 cross
 crowd
 crown
+cruel
 crumb
 crush
 crust
 crypt
+cubic
 cumin
 curio
 curly
@@ -436,6 +441,7 @@ drove
 dryer
 duchy
 dummy
+dusky
 dutch
 duvet
 dwarf
@@ -528,6 +534,7 @@ fjord
 flail
 flair
 flake
+flaky
 flame
 flank
 flare
@@ -573,6 +580,7 @@ foyer
 frail
 frame
 frank
+freak
 fresh
 fried
 frill
@@ -777,6 +785,7 @@ jolly
 joust
 judge
 juice
+jumbo
 jumpy
 karma
 kayak
@@ -1406,6 +1415,7 @@ stove
 strap
 straw
 stray
+strut
 study
 stump
 stung
