@@ -159,6 +159,7 @@ blare
 blast
 blaze
 bleak
+bleat
 bleed
 bleep
 blend
@@ -606,6 +607,7 @@ gaudy
 gauge
 gaunt
 gauze
+gavel
 gawky
 gecko
 geese
@@ -1630,6 +1632,7 @@ waxen
 weary
 wedge
 weedy
+weigh
 weird
 whack
 whale
