@@ -16,7 +16,6 @@ run_game(UsePlayed) =>
     AllWords = [W : W in read_file_lines("words.txt"), length(W) == 5],
     
     if UsePlayed then
-        % Simplified approach to avoid the Map/Set memory overhead
         PlayedWords = read_file_lines("played.txt"),
         FinalCandidates = [W : W in AllWords, not membchk(W, PlayedWords)],
         printf("Excluded played words. Candidates left: %d\n", length(FinalCandidates))
@@ -25,7 +24,7 @@ run_game(UsePlayed) =>
         printf("Running in standard mode. Candidates: %d\n", length(AllWords))
     end,
     
-    % The solver starts
+    % The solver starts with a strong opener
     solve_loop(FinalCandidates, AllWords, "tares").
 
 % The interaction loop
@@ -59,21 +58,23 @@ solve_loop(Candidates, FullDictionary, CurrentGuess) =>
         halt
     end,
 
-    % Find the NEXT guess using entropy
+    % Find the NEXT guess
     NextGuess = pick_best_guess(NewCandidates, FullDictionary),
     solve_loop(NewCandidates, FullDictionary, NextGuess).
 
 % --- LOGIC: Select the best word to play next ---
 pick_best_guess(Candidates, FullDict) = BestWord =>
-    if (length(Candidates) == 1) then
+    Len = length(Candidates),
+    if (Len == 1) then
+        BestWord = Candidates[1]
+    elseif (Len == 2) then
+        printf("Two candidates left. Guessing one for a 50/50 win chance...\n"),
         BestWord = Candidates[1]
     else
         printf("Calculating best entropy for next move... "),
-        % Calculate entropy for all words in FullDict against current Candidates
         Scored = [(calculate_entropy(W, Candidates), W) : W in FullDict],
         Sorted = sort_down(Scored),
         
-        % Extract the best word from the first tuple in the sorted list
         BestPair = Sorted[1],
         (MaxScore, Selection) = BestPair,
         BestWord = Selection,
