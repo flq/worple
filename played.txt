@@ -169,6 +169,7 @@ bliss
 block
 bloke
 blond
+bloom
 blown
 bluff
 blunt
@@ -255,6 +256,7 @@ caulk
 cause
 cease
 cedar
+cello
 chafe
 chain
 chair
@@ -466,6 +468,7 @@ elite
 elope
 elude
 email
+embed
 ember
 empty
 enact
@@ -1221,6 +1224,7 @@ scale
 scant
 scare
 scarf
+scene
 scent
 scoff
 scold
@@ -1433,6 +1437,7 @@ sumac
 sunny
 super
 surer
+surge
 surly
 sushi
 swath
@@ -1598,6 +1603,7 @@ valid
 value
 vapid
 vault
+vegan
 venom
 venue
 verge
